@@ -111,3 +111,76 @@ modalClose.addEventListener('click', () => modal.classList.add('hidden'));
 modal.addEventListener('click', (e) => {
   if (e.target === modal) modal.classList.add('hidden');
 });
+
+// Register the service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      await navigator.serviceWorker.register('./service-worker.js');
+      console.log('Service Worker registered successfully!');
+    } catch (error) {
+      console.error('Service Worker registration failed:', error);
+    }
+  });
+}
+
+// Install application
+let deferredPrompt;
+const installButton = document.getElementById('installButton');
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+
+  if (installButton) {
+    installButton.hidden = false;
+  }
+});
+
+if (installButton) {
+  installButton.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    console.log('Installation result:', result.outcome);
+
+    deferredPrompt = null;
+    installButton.hidden = true;
+  });
+}
+
+// Notifications
+const notificationButton = document.getElementById('notificationButton');
+
+if (notificationButton) {
+  notificationButton.addEventListener('click', async () => {
+    if (!('Notification' in window)) {
+      alert('Notifications are not supported in this browser.');
+      return;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+
+      if (permission !== 'granted') {
+        alert('Notification permission was not granted.');
+        return;
+      }
+
+      if (!('serviceWorker' in navigator)) {
+        alert('Service workers are not supported in this browser.');
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.ready;
+      await registration.showNotification('NASA Space Explorer', {
+        body: 'Welcome! Your space exploration journey begins.',
+        icon: './img/nasa-worm-logo.png'
+      });
+    } catch (error) {
+      console.error('Unable to show notification:', error);
+      alert('Unable to show the notification. Please try again.');
+    }
+  });
+}
