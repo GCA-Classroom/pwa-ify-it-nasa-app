@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NASA Space Explorer</title>
   <link href="style.css" rel="stylesheet" type="text/css" />
+  <link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#102b50">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <div class="container">
@@ -34,8 +37,17 @@
       <div id="modal-body"></div>
     </div>
   </div>
+  <section class="pwa-controls">
+    <button id="installButton" hidden>
+        Install NASA Explorer
+    </button>
 
-  <script src="js/dateRange.js"></script>
+    <button id="notificationButton">
+        Enable Notifications
+    </button>
+</section>
+  <script src="./pwa.js"></script>
+ <script src="js/dateRange.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>
